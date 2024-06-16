@@ -1,4 +1,3 @@
-using BlazorNqueen.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 
