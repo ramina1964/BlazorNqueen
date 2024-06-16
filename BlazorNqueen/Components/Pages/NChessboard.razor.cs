@@ -2,11 +2,14 @@
 
 public partial class NChessboard
 {
-    [Parameter] public int BoardSize { get; set; }
+    [Parameter]
+    public int BoardSize { get; set; }
 
-    [Parameter] public int CanvasSize { get; set; }
+    [Parameter]
+    public int CanvasSize { get; set; }
 
-    [Parameter] public bool ShowDebuggingTools { get; set; }
+    [Parameter]
+    public bool ShowDebuggingTools { get; set; }
 
     // Update the board size
     public async Task SetBoardSize(int size)
@@ -60,7 +63,7 @@ public partial class NChessboard
         await SetBoardSize(BoardSize);
     }
 
-    private string whiteSquareColor = "#f0d9b5"; // Default color for white squares
-    private string blackSquareColor = "#b58863"; // Default color for black squares
+    private string _whiteSquareColor = "#f0d9b5"; // Default color for white squares
+    private string _blackSquareColor = "#b58863"; // Default color for black squares
     private IJSObjectReference _chessJSmodule; //chessinterop.js
 }
