@@ -2,120 +2,55 @@
 @inject ILogger<NChessboard> logger
 
 <style>
-  .chessboard {
-    display: grid;
-    grid-template-columns: repeat(@BoardSize, 1fr);
-    grid-template-rows: repeat(@BoardSize, 1fr);
-    width: 60%; /* The chessboard will fill the width of its container */
-    height: auto; /* The height will be set automatically based on the width */
-    aspect-ratio: 1; /* Keep the aspect ratio of the board square */
-  }
-
-  .square {
-    position: relative; /* Needed to position the image inside the square */
-  }
-    .square img {
-      position: absolute;
-      width: 100%;
-      height: 100%;
+    .chessboard {
+        display: grid;
+        grid-template-columns: repeat(@BoardSize, 1fr);
+        grid-template-rows: repeat(@BoardSize, 1fr);
+        width: 60%; /* The chessboard will fill the width of its container */
+        height: auto; /* The height will be set automatically based on the width */
+        aspect-ratio: 1; /* Keep the aspect ratio of the board square */
     }
 
-  .whiteSquare {
-    background-color: @whiteSquareColor;
-  }
+    .square {
+        position: relative; /* Needed to position the image inside the square */
+    }
 
-  .blackSquare {
-    background-color: @blackSquareColor;
-  }
+        .square img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+    .whiteSquare {
+        background-color: @whiteSquareColor;
+    }
+
+    .blackSquare {
+        background-color: @blackSquareColor;
+    }
 </style>
 
 
 <img id="queen" src="/img/wQ.png" alt="Queen" style="display: none;" />
 
 <div id="gui" class="chessboard">
-  @for (int row = BoardSize - 1; row >= 0; row--)
-  {
-    for (int col = 0; col < BoardSize; col++)
+    @for (int row = BoardSize - 1; row >= 0; row--)
     {
-      <div id="square-@row-@col" class="square @((row + col) % 2 == 0 ? "blackSquare" : "whiteSquare")">
-        @* <span style="color:black; margin:2px; ">@col-@row</span> *@
-      </div>
+        for (int col = 0; col < BoardSize; col++)
+        {
+            <div id="square-@row-@col" class="square @((row + col) % 2 == 0 ? "blackSquare" : "whiteSquare")">
+                @* <span style="color:black; margin:2px; ">@col-@row</span> *@
+            </div>
+        }
     }
-  }
 </div>
 
 <div style="margin:12px;">
-  @if (ShowDebuggingTools)
-  {
-    <button Size="Size.Large" @onclick="SetQueenOnRandomSquare">Place queen random </button>
-    <button Size="Size.Large" @onclick="ClearBoard">Clear board </button>
-    <button Size="Size.Large" @onclick="RenderLabels">Render labels </button>
-    <button Size="Size.Large" @onclick="ChangeBoardSize">Change boardsize </button>
-  } 
-</div>
-
-
-@code {
-
-  [Parameter] public int BoardSize { get; set; }
-  [Parameter] public int CanvasSize { get; set; }
-  [Parameter] public bool ShowDebuggingTools { get; set; }
-
-  private string whiteSquareColor = "#f0d9b5"; // Default color for white squares
-  private string blackSquareColor = "#b58863"; // Default color for black squares
-  private IJSObjectReference chessJSmodule; //chessinterop.js
-
-
-  private void SetQueenOnRandomSquare()
-  {
-    System.Random random = new System.Random();
-    int row = random.Next(0, BoardSize);
-    int col = random.Next(0, BoardSize);
-    SetQueen(row, col);
-  } 
-
-  private async void ChangeBoardSize()
-  {
-    BoardSize = BoardSize == 8 ? 16 : 8;
-    await SetBoardSize(BoardSize);
-  }
-
-  // Method to update board size
-  public async Task SetBoardSize(int size)
-  {
-    logger.LogInformation("SetBoardSize");
-    BoardSize = size;
-    await Task.Delay(100);
-    RenderLabels();
-    StateHasChanged();
-  }
-
-  public void ClearBoard()
-  {
-    logger.LogInformation("ClearBoard");
-    chessJSmodule.InvokeVoidAsync("clearNBoard");
-  }
-
-  public void RenderLabels()
-  {
-    logger.LogInformation("RenderLabels");
-    chessJSmodule.InvokeVoidAsync("redrawLabels");
-  }
-
-  public void SetQueen(int col, int row)
-  {
-    logger.LogInformation($"SetQueen: {col}-{row}");
-    chessJSmodule.InvokeVoidAsync("setQueen", col, row);
-    InvokeAsync(StateHasChanged);
-  }
-
-  protected override async Task OnAfterRenderAsync(bool firstRender)
-  {
-    if (firstRender)
+    @if (ShowDebuggingTools)
     {
-      logger.LogInformation("OnAfterRenderAsync");
-	    chessJSmodule = await JS.InvokeAsync<IJSObjectReference>("import", "./js/chessInterop.js?v=1.0.0");
+        <button Size="Size.Large" @onclick="SetQueenOnRandomSquare">Place queen random </button>
+        <button Size="Size.Large" @onclick="ClearBoard">Clear board </button>
+        <button Size="Size.Large" @onclick="RenderLabels">Render labels </button>
+        <button Size="Size.Large" @onclick="ChangeBoardSize">Change boardsize </button>
     }
-  }
-}
-
+</div>
